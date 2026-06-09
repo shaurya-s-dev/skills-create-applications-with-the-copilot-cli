@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Supported operations: addition, subtraction, multiplication, and division.
+// Supported operations: addition, subtraction, multiplication, division, modulo, power, and square root.
 
 function add(a, b) {
   return a + b;
@@ -22,6 +22,26 @@ function divide(a, b) {
   return a / b;
 }
 
+function modulo(a, b) {
+  if (b === 0) {
+    throw new Error('Modulo by zero is not allowed.');
+  }
+
+  return a % b;
+}
+
+function power(base, exponent) {
+  return base ** exponent;
+}
+
+function squareRoot(n) {
+  if (n < 0) {
+    throw new Error('Square root of a negative number is not allowed.');
+  }
+
+  return Math.sqrt(n);
+}
+
 function parseNumber(value, label) {
   const parsed = Number(value);
 
@@ -34,24 +54,53 @@ function parseNumber(value, label) {
 
 function calculate(operation, leftValue, rightValue) {
   const left = parseNumber(leftValue, 'left operand');
-  const right = parseNumber(rightValue, 'right operand');
 
   switch (operation) {
     case 'add':
     case '+':
-      return add(left, right);
+      if (rightValue === undefined) {
+        throw new Error(`Missing right operand for operation: ${operation}`);
+      }
+      return add(left, parseNumber(rightValue, 'right operand'));
     case 'subtract':
     case '-':
-      return subtract(left, right);
+      if (rightValue === undefined) {
+        throw new Error(`Missing right operand for operation: ${operation}`);
+      }
+      return subtract(left, parseNumber(rightValue, 'right operand'));
     case 'multiply':
     case '*':
     case 'x':
     case '×':
-      return multiply(left, right);
+      if (rightValue === undefined) {
+        throw new Error(`Missing right operand for operation: ${operation}`);
+      }
+      return multiply(left, parseNumber(rightValue, 'right operand'));
     case 'divide':
     case '/':
     case '÷':
-      return divide(left, right);
+      if (rightValue === undefined) {
+        throw new Error(`Missing right operand for operation: ${operation}`);
+      }
+      return divide(left, parseNumber(rightValue, 'right operand'));
+    case 'mod':
+    case 'modulo':
+    case '%':
+      if (rightValue === undefined) {
+        throw new Error(`Missing right operand for operation: ${operation}`);
+      }
+      return modulo(left, parseNumber(rightValue, 'right operand'));
+    case 'power':
+    case '^':
+    case '**':
+      if (rightValue === undefined) {
+        throw new Error(`Missing right operand for operation: ${operation}`);
+      }
+      return power(left, parseNumber(rightValue, 'right operand'));
+    case 'sqrt':
+    case 'squareRoot':
+    case '√':
+      return squareRoot(left);
     default:
       throw new Error(`Unsupported operation: ${operation}`);
   }
@@ -60,8 +109,8 @@ function calculate(operation, leftValue, rightValue) {
 function main(argv) {
   const [operation, leftValue, rightValue] = argv;
 
-  if (!operation || leftValue === undefined || rightValue === undefined) {
-    console.log('Usage: node src/calculator.js <add|subtract|multiply|divide> <left> <right>');
+  if (!operation || leftValue === undefined) {
+    console.log('Usage: node src/calculator.js <operation> <left> [right]');
     process.exitCode = 1;
     return;
   }
@@ -84,5 +133,8 @@ module.exports = {
   subtract,
   multiply,
   divide,
+  modulo,
+  power,
+  squareRoot,
   calculate,
 };
